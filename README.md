@@ -16,15 +16,28 @@ Riga Business School · Riga Technical University (RTU)
 
 [Full course syllabus](syllabus/BS0030_Programming_Languages_Syllabus_Fall_2026.md)
 
-## Current practical work
+## Weeks 5–14 materials
 
-### Week 2 — Syntax, BNF/EBNF, Parsing, and ASTs
+The course schedule remains syllabus-led: SQL in Week 7, midterm in Week 8, Kotlin in Weeks 9–10, Go in Weeks 11–12, and JavaScript/TypeScript in Weeks 13–14.
 
-Week 1 concentrated on introductory reading, language history, and course orientation. **Week 2 is the first hands-on programming lab.**
+| Week | Lecture | Practical |
+| --- | --- | --- |
+| 5 | [Notes](lectures/week05/lecture.md) | [Lab](labs/week05/README.md) |
+| 6 | [Notes](lectures/week06/lecture.md) | [Lab](labs/week06/README.md) |
+| 7 | [Notes](lectures/week07/lecture.md) | [Lab](labs/week07/README.md) |
+| 8 | [Notes](lectures/week08/lecture.md) | [Lab](labs/week08/README.md) |
+| 9 | [Notes](lectures/week09/lecture.md) | [Lab](labs/week09/README.md) |
+| 10 | [Notes](lectures/week10/lecture.md) | [Lab](labs/week10/README.md) |
+| 11 | [Notes](lectures/week11/lecture.md) | [Lab](labs/week11/README.md) |
+| 12 | [Notes](lectures/week12/lecture.md) | [Lab](labs/week12/README.md) |
+| 13 | [Notes](lectures/week13/lecture.md) | [Lab](labs/week13/README.md) |
+| 14 | [Notes](lectures/week14/lecture.md) | [Lab](labs/week14/README.md) |
 
-➡️ **[Open the Week 2 Lab](labs/week02/README.md)**
+[Midterm preparation](assessments/midterm-preparation.md) and [final preparation](assessments/final-preparation.md). Actual assessment questions, keys and instructor masters remain private.
 
-The lab uses Python in the **BS0030 Core** GitHub Codespace.
+Assessed specifications: [A3](labs/week06/a3-assignment.md), [A4](labs/week07/assignment.md), [A5](labs/week10/assignment.md), [A6](labs/week12/assignment.md), [A7](labs/week14/assignment.md).
+
+Earlier practicals: [Week 2](labs/week02/README.md), [Week 3](labs/week03/README.md), [Week 4](labs/week04/README.md).
 
 ## Start here: fork once, use your fork all semester
 
@@ -53,24 +66,22 @@ Sync new instructor material into the same fork later
 > **Codespace = disposable language laboratory.**  
 > **GitHub fork = permanent course portfolio.**
 
-### First setup for Week 2
+### Setup for Week 6
 
-1. Sign in to GitHub.
-2. Open the public course repository.
-3. Click **Fork** and create your own fork under your GitHub account.
-4. Open **your fork**, not the original `ValRCS` repository.
-5. Create a Codespace for your fork.
-6. Select the **BS0030 Core — Python, C++ and JavaScript** Dev Container configuration.
-7. Wait for VS Code in the browser to finish building the environment.
-8. In the terminal, from the repository root, run:
+If you already created your fork earlier in the course, **keep using the same fork**. First use **Sync fork** / **Update branch** on GitHub so that your fork contains the Week 6 material.
+
+1. Open **your fork**, not the original `ValRCS` repository.
+2. Open your existing logic Codespace or create/rebuild one with the logic configuration.
+3. Select **BS0030 Logic — SWI-Prolog**.
+4. From the repository root, run:
 
 ```bash
-bash scripts/check-core-environment.sh
+bash scripts/check-logic-environment.sh
 ```
 
-9. Continue with the [Week 2 Lab](labs/week02/README.md).
+5. Continue with the [Week 6 Prolog Lab](labs/week06/README.md).
 
-Local development is allowed, but local setup is the student's responsibility. Assessed code must run in the designated course Codespace.
+The logic container supports both Weeks 5 and 6. Local development is allowed, but local setup is the student's responsibility. Assessed code must run in the designated course Codespace.
 
 ## Keeping your fork up to date
 
@@ -83,20 +94,19 @@ Before starting a newly released week:
 3. resolve any conflicts before beginning new work;
 4. open or rebuild the Codespace required for that week's language environment.
 
-To reduce conflicts, instructor-owned files and student-owned files are separated where practical. In Week 2, for example:
+To reduce conflicts, course-provided files and student-owned files are separated where practical. In Week 6:
 
 ```text
-Instructor-managed:
-labs/week02/README.md
-labs/week02/assignment.md
-labs/week02/starter/
-labs/week02/examples/
+Course-provided:
+labs/week06/README.md
+labs/week06/assignment.md
+labs/week06/starter/
 
 Student-managed:
-labs/week02/work/
+labs/week06/work/
 ```
 
-Do not edit instructor-managed starter files unless the lab explicitly tells you to do so.
+Copy the Week 6 starter file into `work/` once, then make your changes only in the working copy. Do not edit the course-provided starter file unless the lab explicitly tells you to do so.
 
 ## About the course
 
@@ -139,16 +149,22 @@ By the end of the course, students should be able to explain and compare program
 
 The repository uses several Dev Container configurations during the semester rather than one oversized environment containing every language.
 
-The first published environment is:
+Currently published environments are:
 
 ```text
 .devcontainer/
-└── core/
-    ├── Dockerfile
-    └── devcontainer.json
+├── core/
+├── functional/
+└── logic/
 ```
 
-**Core** is used for Week 2 and supports Python, C/C++, Node.js, Git, and SQLite. Later paradigm blocks will add their own environments, such as Clojure/JDK, Prolog, Kotlin, Go, and JavaScript/TypeScript.
+**Core** is used for Week 2 and supports Python, C/C++, Node.js, Git, and SQLite.
+
+**Functional** is used for Weeks 3–4 and provides Java, the Clojure CLI, Git, and Calva. Weeks 3 and 4 each pin Clojure **1.12.6** in their respective `deps.edn` files.
+
+**Logic** is used for Weeks 5–6 and provides SWI-Prolog and Git.
+
+Later paradigm blocks will add their own environments for Kotlin, Go, and JavaScript/TypeScript.
 
 Students keep the same GitHub fork even when they create a new Codespace for a different language block.
 
@@ -160,16 +176,41 @@ RBS_BS0030_Programming_Languages/
 ├── LICENSE
 ├── syllabus/
 ├── .devcontainer/
-│   └── core/
+│   ├── core/
+│   └── functional/
 ├── scripts/
-│   └── check-core-environment.sh
+│   ├── check-core-environment.sh
+│   ├── check-functional-environment.sh
+│   └── check-logic-environment.sh
 ├── lectures/
 ├── labs/
-│   └── week02/
+│   ├── week02/
+│   │   ├── README.md
+│   │   ├── assignment.md
+│   │   ├── grammar-exercises.md
+│   │   ├── examples/
+│   │   ├── starter/
+│   │   └── work/
+│   ├── week03/
+│   │   ├── README.md
+│   │   ├── assignment.md
+│   │   ├── deps.edn
+│   │   ├── starter/
+│   │   └── work/
+│   ├── week04/
+│   │   ├── README.md
+│   │   ├── assignment.md
+│   │   ├── deps.edn
+│   │   ├── starter/
+│   │   └── work/
+│   ├── week05/
+│   │   ├── README.md
+│   │   ├── assignment.md
+│   │   ├── starter/
+│   │   └── work/
+│   └── week06/
 │       ├── README.md
 │       ├── assignment.md
-│       ├── grammar-exercises.md
-│       ├── examples/
 │       ├── starter/
 │       └── work/
 ├── assignments/
@@ -213,3 +254,4 @@ Useful official references include:
 The RTU ORTUS Moodle course is authoritative for announcements, deadlines, quizzes, grades, and official submissions. This repository provides version-controlled student materials and code.
 
 If a repository description and a current Moodle announcement differ on an assessment requirement, follow the Moodle announcement and contact the instructor if clarification is needed.
+

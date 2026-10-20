@@ -1,0 +1,23 @@
+{
+  "name": "BS0030 Functional — Clojure",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "remoteUser": "vscode",
+  "hostRequirements": {
+    "cpus": 2
+  },
+  "postCreateCommand": "bash scripts/check-functional-environment.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": false
+      },
+      "extensions": [
+        "betterthantomorrow.calva"
+      ]
+    }
+  }
+}
