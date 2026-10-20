@@ -1,0 +1,76 @@
+
+=== 0. Fixture check ===
+members  books  loans
+-------  -----  -----
+      3      4      4
+
+=== 1a. Computing titles ===
+id    title
+--  ----------
+ 1  Algorithms
+ 3  Databases
+
+=== 1b. Distinct categories ===
+ category
+----------
+computing
+literature
+
+=== 2. Active loans with names and titles ===
+loan_id  member     book
+-------  ------  ----------
+      1  Ada     Algorithms
+      2  Ada     Poems
+      4  Ben     Algorithms
+
+=== 3. Every member and active-loan count (LEFT JOIN, filter in ON) ===
+id  name  active_loans
+--  ----  ------------
+ 1  Ada              2
+ 2  Ben              1
+ 3  Cara             0
+
+=== 3-bug. WHERE-versus-ON trap (filter in WHERE) ===
+id  name  active_loans
+--  ----  ------------
+ 1  Ada              2
+ 2  Ben              1
+
+=== 4. Members with no active loan (NOT EXISTS) ===
+id  name
+--  ----
+ 3  Cara
+
+=== 5. Books with at least two active loans ===
+id    title     active_loans
+--  ----------  ------------
+ 1  Algorithms             2
+
+=== 6. Every book and active-loan count ===
+id    title     active_loans
+--  ----------  ------------
+ 1  Algorithms             2
+ 2  Poems                  1
+ 3  Databases              0
+ 4  Stories                0
+
+=== 7. Member names per active loan, without and with DISTINCT ===
+name
+----
+Ada
+Ada
+Ben
+name
+----
+Ada
+Ben
+
+=== Extension: EXPLAIN QUERY PLAN before / after index ===
+QUERY PLAN
+|--SCAN m
+`--CORRELATED SCALAR SUBQUERY 1
+   `--SCAN l
+QUERY PLAN
+|--SCAN m
+`--CORRELATED SCALAR SUBQUERY 1
+   `--SEARCH l USING COVERING INDEX idx_loan_member_returned (member_id=? AND returned=?)
