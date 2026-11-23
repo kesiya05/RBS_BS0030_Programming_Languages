@@ -1,57 +1,75 @@
-# Week 13: Local event application: start A7
+# Week 13: Local event application — A7 baseline
 
-## Environment and portfolio
+**Event-driven JavaScript/TypeScript · 90-minute lab · 30 November 2026**
 
-Use the **BS0030 Core** Codespace configuration from your existing student fork. Sync the fork before opening or rebuilding the appropriate environment. The Core container supports SQLite and Node; the Kotlin and Go configurations support Weeks 9–10 and 11–12 respectively.
+Week 13 introduces synchronous event-listener dispatch, inversion of control, function-identity cleanup, microtasks, timers, error boundaries and validation of unknown JSON. This is the **ungraded baseline for A7**; the assessed deliverable and rubric are in [Week 14](../week14/assignment.md).
 
-From a terminal run:
+## Environment
+
+Use the **BS0030 Core** Codespace from your **own fork**. Sync your fork before opening or rebuilding it. Verify:
 
 ```bash
 node --version && npm --version
 ```
 
-Commit your source and explanations under `labs/week13/work/`. Markdown code blocks below are the starter source: copy the indicated block into the named file, then edit your working copy. Generated jars, executable binaries and disposable database files are not submission evidence.
+The committed `starter/` directory contains:
 
-## A runnable event shell
+- `lending.cjs`: an intentionally complete **pure eligibility predicate**, not a full A7 solution;
+- `events.cjs`: named listeners with TODOs for registration and exact-reference disposal;
+- `app.cjs` and `fixture.json`: a local reproducible event demonstration;
+- `types.ts`: an incomplete TypeScript runtime guard (TODO);
+- `tests/lending.test.cjs`: public behavioral tests; the event case fails until TODOs are implemented.
 
-Create `labs/week13/work/app.cjs`:
+No remote service or framework is required. Use Node for the event application and the pinned TypeScript compiler for the type-only exercise.
 
-```javascript
-const { EventEmitter } = require('node:events');
-const bus = new EventEmitter();
-const allowed = (active, limit) => active < limit;
-function onRequest(request) {
-  console.log(allowed(request.active, request.limit));
-}
-bus.on('request', onRequest);
-bus.emit('request', { active: 2, limit: 3 });
-bus.off('request', onRequest);
-```
+## Create your working copy
 
-Run `node labs/week13/work/app.cjs`. The expected output is true. Extend this with a local immutable fixture and named event payloads; do not require a remote service.
-
-## Workshop sequence (90 minutes)
-
-1. **20 min:** add two listeners and demonstrate synchronous invocation order.
-2. **15 min:** remove a listener with the same reference and verify no duplicate effect remains.
-3. **20 min:** trace a microtask and a timer, then test a callback failure.
-4. **25 min:** create `types.ts` with a DomainEvent union and runtime guard over unknown JSON input.
-5. **10 min:** explain the event shell and pure decision core. Start A7.
-
-Compile TypeScript using the documented pinned teaching compiler:
+From the repository root:
 
 ```bash
+mkdir -p labs/week13/work
+cp labs/week13/starter/* labs/week13/work/
+cp labs/week13/tests/lending.test.cjs labs/week13/work/lending.test.cjs
+```
+
+**Do not overwrite existing student work.** In your copied `work/lending.test.cjs`, update these two imports to refer to your copies:
+
+```javascript
+const { allowed } = require('./lending.cjs');
+const { createLendingBus } = require('./events.cjs');
+```
+
+Keep the instructor-managed public `starter/` and `tests/` files unchanged. The copied test file is there to verify **your** implementation; do not weaken its assertions.
+
+## Predict and test the original baseline
+
+```bash
+node --test labs/week13/tests/*.test.cjs
+node labs/week13/starter/app.cjs
+```
+
+The original event-listener test is expected to fail because event registration/disposal are TODOs. The TypeScript guard also rejects the valid fixture until implemented. After editing your own working copies:
+
+```bash
+node --test labs/week13/work/lending.test.cjs
+node labs/week13/work/app.cjs
 npx --yes --package typescript@5.9.3 tsc labs/week13/work/types.ts --strict --target ES2022 --module commonjs --outDir /tmp/week13-ts
 node /tmp/week13-ts/types.js
 ```
 
-No @types/node dependency is needed for a type-only fixture that uses console, JSON and plain objects. Keep Node EventEmitter code in app.cjs. Core: working events and cleanup. Standard: scheduling trace plus validated typed payloads. Extension: a browser button UI with explicit listener disposal.
+The TypeScript command may download the pinned teaching compiler through npm on the first run. This type-only example does not need `@types/node`.
 
+## Workshop sequence (90 minutes)
 
-## Submission
+1. **15 min — synchronous events.** Predict `EventEmitter.emit` order; explain why listeners do not automatically become asynchronous.
+2. **15 min — subscription lifecycle.** Register the decision and audit handlers, in that order. Remove the exact same function references during `dispose()`; verify zero remaining listeners.
+3. **20 min — scheduling and errors.** Predict a synchronous log, queued microtask and timer; distinguish a later callback exception from a synchronous `try` surrounding timer registration.
+4. **20 min — safe event data.** Complete `isBorrowRequest(value: unknown)` with an object/field check and finite-integer validation; do not rely on a TypeScript assertion to validate JSON.
+5. **15 min — test evidence.** Run the Node tests and TypeScript example. Explain why the pure domain function and mutable event shell are separated.
+6. **5 min — A7 baseline.** Commit working files and a brief explanation of expected listener order (decision, audit), cleanup, and scheduling.
 
-Follow [the portfolio instructions](../../submission.md). For assessed work, include a commit link, reproducible run commands, tests or observed outputs, and a short explanation of the relevant programming model. Deadlines and final administrative rules come from Moodle.
+**Expected behavior:** one borrow-request dispatch records a decision followed by an audit entry; disposal leaves no registered listeners and a later emit adds no history. The original starter does *not* yet satisfy this contract.
 
-## Lecture and next step
+## Continuation and submission
 
-[Week 13 lecture](../../lectures/week13/lecture.md). Week 14 gives deferred work a composable result representation through promises and async/await.
+Keep work under `labs/week13/work/`; preserve a baseline Git commit so you can explain the Week 14 promise/async refactor. See the [Week 13 practical specification](assignment.md), [Week 14 A7 rubric](../week14/assignment.md), [Week 13 lecture](../../lectures/week13/lecture.md), and the [portfolio instructions](../../submission.md). Moodle remains authoritative for deadlines and assessment conditions.

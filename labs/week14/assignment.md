@@ -2,6 +2,10 @@
 
 Course weight: **5%**. Local rubric: **100 points**. Deadline and submission procedure are announced in Moodle.
 
+## Week 13 baseline
+
+Preserve the Week 13 commit showing two synchronous named `borrow-request` subscribers (decision and audit), exact-reference listener disposal, a pure eligibility function, and a TypeScript runtime payload guard. Week 14 extends the same application with asynchronous local lookups, promise composition, bounded overlap and cancellation or freshness protection. The rubric below grades the complete A7; Week 13 is not a separate graded assignment.
+
 ## Task and evidence
 
 Extend the Week 13 app using the Week 14 local lookup fixture. Demonstrate valid, invalid and empty inputs. Include one TypeScript payload example with runtime validation of unknown data. The main runnable Node app can remain JavaScript. No remote service, framework or real network benchmark is required.
@@ -18,6 +22,8 @@ Submit working source, run instructions, result evidence and your explanation in
 | 15 | Bounded overlap of at most two operations or clearly explained sequential batching. |
 | 15 | Cancellation or freshness protection with evidence of cleanup. |
 | 10 | Pure core, typed/validated payload example and comparison with two previous paradigms. |
+
+Use the [lab test evidence matrix](README.md#reproducible-test-evidence) when preparing your submission. Include reproducible run commands, assertions or observed outputs and explanation of listener cleanup, input order, bounded overlap and cancellation or freshness. The supplied teaching scaffold is not a complete A7 implementation.
 
 ## Assistance and authorship
 
