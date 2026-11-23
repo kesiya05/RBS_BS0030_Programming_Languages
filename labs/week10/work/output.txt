@@ -1,0 +1,14 @@
+Active loans: 1
+Active loans: 2
+Active loans: 3
+Rejected: limit of 3 active loans reached
+standard: exact limit, extra borrow, return all, empty return ok
+research: 5 granted, 6th rejected ok
+zero limit: Rejected: limit of 0 active loans reached
+negative limit: loan limit must be nonnegative, was -1
+findMember(1) = Member(id=1, name=Ada), findMember(99) = null
+safe call with default: no such member
+a1 == a2: true, a1 === a2: false
+firstOrNull: 7, Ada, Member(id=1, name=Ada), null
+shallow copy: b1=[1, 2], b2=[1, 2]
+all checks passed
