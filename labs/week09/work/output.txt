@@ -1,0 +1,7 @@
+Core StandardPolicy borrow/return - OK
+StandardPolicy (limit 3): empty return, exact limit, extra borrow, repeated return - OK
+ResearchPolicy (limit 5): empty return, exact limit, extra borrow, repeated return - OK
+Negative limit rejected: loan limit must be nonnegative, was -1
+val keeps the reference fixed, not the object: shelf=[Algorithms, Poems], activeLoans=1
+Pure version: s0=LoanState(limit=3, activeLoans=0), after two borrows=LoanState(limit=3, activeLoans=2), extra borrow at full rejected - OK
+All checks passed.
