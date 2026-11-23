@@ -1,72 +1,49 @@
-# Week 9 - Kotlin domain model (start of A5)
+# Week 9 notes
 
-## Files
+Files: Main.kt (the code) and output.txt (what it printed when I ran it).
 
-| File | Purpose |
-|---|---|
-| `Main.kt` | `LoanPolicy`, `StandardPolicy`, `ResearchPolicy`, `Account`, boundary checks, pure extension |
-| `output.txt` | Observed output of the program |
+To run it from the repo root:
 
-## How to run
+    kotlinc labs/week09/work/Main.kt -include-runtime -d /tmp/week09.jar
+    java -jar /tmp/week09.jar
 
-From the repository root (BS0030 Kotlin Codespace):
+The jar is in /tmp so it doesn't get committed. All the tests use check(), so if something is wrong the program crashes instead of printing "all checks passed".
 
-```bash
-kotlinc labs/week09/work/Main.kt -include-runtime -d /tmp/week09.jar
-java -jar /tmp/week09.jar
-```
+## Invariant
 
-The jar goes to `/tmp` and is not committed. Every test uses `check(...)`, so a broken rule stops the program with an `IllegalStateException` instead of printing `All checks passed.`
+The rule is 0 <= activeLoans <= limit.
 
-## Invariant and rejection behaviour
+activeLoans has a private setter, so outside the class you can read it but not change it. The only way to change it is borrow() and returnOne(), and both check the rule first. borrow() only works if activeLoans is below the limit, and returnOne() only works if activeLoans is above 0. If the operation isn't allowed it returns false and the count stays the same.
 
-The invariant is `0 <= activeLoans <= limit`.
+The limit is checked in init with require, so an account with a negative limit is never created. I also store the limit in a val when the account is made, so it stays the same for the whole life of the account.
 
-- **Private setter.** `activeLoans` has a `private set`, so code outside `Account` can read it but cannot assign it. The only way to change it is through `borrow()` and `returnOne()`, which each check the rule first.
-- **`borrow()`** is accepted only while `activeLoans < limit`, so after `+1` the count is still at most `limit`.
-- **`returnOne()`** is accepted only while `activeLoans > 0`, so after `-1` the count is never negative.
-- **Rejection.** A rejected operation changes nothing and returns `false`. A successful one returns `true`. Week 10 replaces the Boolean with richer outcome types.
-- **Constructor validation.** `init { require(limit >= 0) }` throws before an `Account` with a negative limit can exist, so every account starts in a valid state (`activeLoans = 0`).
-- **Constant limit.** The limit is read from the policy once, in the constructor, and stored in a `val`. Even if some policy object returned different values later, an existing account keeps the limit it started with.
+## Boundary tests
 
-## Boundary tests (observed)
+I wrote one function, checkBoundaries, and ran it for both policies. It tests:
 
-`checkBoundaries` runs the same test on an account with each policy:
+- returning when there are no loans (rejected)
+- borrowing exactly up to the limit (3 for standard, 5 for research, all accepted)
+- borrowing one more (rejected, count doesn't change)
+- returning everything and then one more time (last one rejected)
 
-| Test | StandardPolicy (3) | ResearchPolicy (5) |
-|---|---|---|
-| Return with no loans | rejected, count stays 0 | rejected, count stays 0 |
-| Borrow up to the exact limit | 3 accepted | 5 accepted |
-| One extra borrow | rejected, count stays 3 | rejected, count stays 5 |
-| Return everything, then once more | accepted down to 0, then rejected | same |
-
-A policy with limit `-1` is rejected by `require` with the message `loan limit must be nonnegative, was -1`.
+Both policies passed. A policy with limit -1 throws "loan limit must be nonnegative, was -1".
 
 ## Interface dispatch and composition
 
-`Account` does not inherit from a policy. It **has** a policy (`private val policy: LoanPolicy`). This is composition: the account owns the loan-counting rules, and the policy only answers one question, "what is the limit?"
+Account doesn't extend a policy, it has one as a field. That's composition. The account does the counting and the policy only tells it the limit.
 
-`checkBoundaries` and `Account` only know the `LoanPolicy` interface. When `policy.limit()` is called, which version runs is decided at runtime by the actual object: `StandardPolicy` returns 3 and `ResearchPolicy` returns 5. This is dynamic (interface) dispatch. That is why adding `ResearchPolicy` needed no change to `Account` or to the tests. They are interchangeable, and a new policy is just a new class.
+Account and checkBoundaries only know about the LoanPolicy interface. When policy.limit() is called, the actual object decides which version runs, so StandardPolicy gives 3 and ResearchPolicy gives 5. Because of that I didn't have to change Account or the tests when I added ResearchPolicy.
 
-## val does not freeze a mutable object
+## val vs mutable objects
 
-```kotlin
-val shelf = mutableListOf("Algorithms")
-shelf.add("Poems")                     // allowed
-// shelf = mutableListOf("Databases")  // compile error
-```
+    val shelf = mutableListOf("Algorithms")
+    shelf.add("Poems")        // works
+    // shelf = mutableListOf("Databases")   // doesn't compile
 
-`val` fixes the **reference**: `shelf` always points to the same list. The list object itself is still mutable, so `add` works. The same happens with `val sameAccount = account`. `sameAccount.borrow()` changes the one shared `Account` object, and the change is visible through both names. To get a list that really cannot change, the type has to be read-only (`listOf`/`List`) or the data has to be copied.
+val means shelf always points to the same list, but the list itself can still be changed. Same thing with `val sameAccount = account`: calling sameAccount.borrow() changes the same account object, so account.activeLoans goes up too.
 
-## Extension: pure state-transition version
+## Extension (pure version)
 
-`LoanState` is an immutable `data class`, and its `init` block checks the same invariant. `borrow(state)` and `returnOne(state)` never change their input. They return a `Transition(accepted, newState)`, building the new state with `copy(...)`. When an operation is rejected, they return the same state unchanged.
+I also made a version without mutation. LoanState is a data class with the same checks in init. borrow(state) and returnOne(state) don't change the state they get, they return a Transition with accepted and a new state made with copy(). If it's rejected they just return the old state.
 
-| | OOP `Account` | Pure `LoanState` |
-|---|---|---|
-| State | hidden inside a mutable object | an immutable value passed in and out |
-| Protecting the invariant | private setter plus checks in methods | `init` check, and only valid states can be built |
-| Old states | overwritten | still available (`s0` keeps `activeLoans = 0`) |
-| Testing | create an object, call methods, read the field | call a function and compare values |
-
-Both versions are kept in `Main.kt`. The OOP one is the A5 baseline that Week 10 refines.
+The difference from the OOP version is that the old states are still there afterwards (s0 still has 0 loans), and testing is just calling a function and comparing the result. In the OOP version the state is inside the object and gets overwritten. I kept both in Main.kt because the OOP one is the base for Week 10.
