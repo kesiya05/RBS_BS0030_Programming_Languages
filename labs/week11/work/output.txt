@@ -1,0 +1,43 @@
+$ go run main.go
+[1 4 9 16] 30
+sequential: [1 4 9 16] 30
+empty: [] 0
+stream: 1 4 9 16
+mutex version: [1 4 9 16] 30
+
+$ GO111MODULE=off go test -v
+=== RUN   TestStreamSquares
+--- PASS: TestStreamSquares (0.00s)
+=== RUN   TestMutexSquares
+--- PASS: TestMutexSquares (0.00s)
+=== RUN   TestManyInputs
+--- PASS: TestManyInputs (0.00s)
+=== RUN   TestSequentialSquares
+--- PASS: TestSequentialSquares (0.00s)
+=== RUN   TestConcurrentSquares
+=== RUN   TestConcurrentSquares/empty
+=== RUN   TestConcurrentSquares/single
+=== RUN   TestConcurrentSquares/four
+=== RUN   TestConcurrentSquares/negative_and_zero
+--- PASS: TestConcurrentSquares (0.00s)
+    --- PASS: TestConcurrentSquares/empty (0.00s)
+    --- PASS: TestConcurrentSquares/single (0.00s)
+    --- PASS: TestConcurrentSquares/four (0.00s)
+    --- PASS: TestConcurrentSquares/negative_and_zero (0.00s)
+PASS
+ok  	_/workspaces/RBS_BS0030_Programming_Languages/labs/week11/work	0.004s
+
+$ GO111MODULE=off go test -race -count=10
+PASS
+ok  	_/workspaces/RBS_BS0030_Programming_Languages/labs/week11/work	1.065s
+
+$ go run -race main.go
+[1 4 9 16] 30
+sequential: [1 4 9 16] 30
+empty: [] 0
+stream: 1 4 9 16
+mutex version: [1 4 9 16] 30
+
+$ go run scratch/deadlock.go
+fix 1 (sending goroutine): 1
+fix 2 (capacity-one buffer): 1
